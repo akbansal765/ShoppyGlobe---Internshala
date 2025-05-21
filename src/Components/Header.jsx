@@ -7,6 +7,7 @@ function Header(){
 
     const navigate = useNavigate();
 
+    // handling cart icon
     function handleOpenCart(){
         navigate('/cart');
     }

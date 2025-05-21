@@ -18,6 +18,7 @@ function ProductList(){
     }
     }, [data]);
 
+    //handling error from useFetch custom hook
      if(error){
             return (
                 <div className="fetch_error_box">
@@ -27,6 +28,7 @@ function ProductList(){
             )
      }
 
+    // handling search filter
     function handleSearchProduct(value){
         const filteredItems = data?.products?.filter(item => item.title.toLowerCase().includes(value.toLowerCase()));
         setItems(filteredItems)

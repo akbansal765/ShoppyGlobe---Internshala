@@ -12,6 +12,7 @@ function ProductDetail(){
    const dispatch = useDispatch();
 
    const [detailItem, setDetailItem] = useState('');
+   // getting id from url
    const params = useParams();
 
    const {data, error} = useFetch('https://dummyjson.com/products');

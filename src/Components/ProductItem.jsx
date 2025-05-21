@@ -19,6 +19,7 @@ function ProductItem({item}){
         //dispatching action to add the item to cart slice and updating the cart icon
         dispatch(addItem(item));
         
+        //calcualting the toal quantity in cart slice after item added to cart
         dispatch(calculateTotalQuantity());
 
     }

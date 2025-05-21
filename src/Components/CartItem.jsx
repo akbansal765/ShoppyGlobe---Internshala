@@ -7,6 +7,7 @@ function CartItem({cartItemData}){
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    //redirecting user to product details page after clicking on cart item image
     function handleNavigateProductDetailPage(){
          navigate(`/productdetail/${cartItemData.id}`)
     }
@@ -22,6 +23,7 @@ function CartItem({cartItemData}){
     function handleRemoveItem(){
         dispatch(removeItem(cartItemData));
 
+        //calcualte the total quantity in cart slice after cart item being removed
         dispatch(calculateTotalQuantity());
     }
     

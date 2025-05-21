@@ -3,8 +3,10 @@ import CartItem from "./CartItem";
 
 function Cart(){
 
+    // getting cart items from cart slice
     const cartItems = useSelector(store => store.cart.items);
     
+    //getting totalQuanity from the cart slice
     const totalItems = useSelector(store => store.cart.totalQuantity);
 
     const totalPrice = cartItems.reduce((acc, cur) => {
