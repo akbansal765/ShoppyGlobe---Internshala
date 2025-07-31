@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 export const addCartItemDB = createAsyncThunk("addCartItemDB", async (item, thunkAPI) => {
     try{
         const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
-        const response = await fetch(`http://localhost:5000/cart?email=${userEmail}`, {
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/cart?email=${userEmail}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -22,7 +22,7 @@ export const addCartItemDB = createAsyncThunk("addCartItemDB", async (item, thun
 export const deleteCartItemDB = createAsyncThunk("deleteCartItemDB", async (id, thunkAPI) => {
     try{
         const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
-        const response = await fetch(`http://localhost:5000/cart/${id}?email=${userEmail}`, {
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/cart/${id}?email=${userEmail}`, {
             method: "DELETE",
         });
         if (!response.ok) {
@@ -37,7 +37,7 @@ export const deleteCartItemDB = createAsyncThunk("deleteCartItemDB", async (id, 
 export const updateCartItemDB = createAsyncThunk("updateCartItemDB", async ({id, quantity}, thunkAPI) => {
     try{
         const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
-        const response = await fetch(`http://localhost:5000/cart/${id}?email=${userEmail}`, {
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/cart/${id}?email=${userEmail}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -56,7 +56,7 @@ export const updateCartItemDB = createAsyncThunk("updateCartItemDB", async ({id,
 export const getCartItemsDB = createAsyncThunk("getCartItemsDB", async (_, thunkAPI) => {
     try{
         const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
-        const response = await fetch(`http://localhost:5000/cartItems?email=${userEmail}`, {
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/cartItems?email=${userEmail}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchProductData = createAsyncThunk("productData", async (_, thunkAPI) => {
     try{
-        const response = await fetch("http://localhost:5000/products");
+        const response = await fetch("https://shoppy-globe-backend.onrender.com/products");
         const data = await response.json();
         
         if(!response.ok){
@@ -16,7 +16,7 @@ export const fetchProductData = createAsyncThunk("productData", async (_, thunkA
 
 export const fetchProductByID = createAsyncThunk("product", async (productId, thunkAPI) => {
     try{
-        const response = await fetch(`http://localhost:5000/product/${productId}`);
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/product/${productId}`);
         if(!response.ok){
             throw new Error(`Server responded with ${response.status}`);
         }

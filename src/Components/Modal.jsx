@@ -17,12 +17,27 @@ function Modal({ setSignIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleLogin(e) {
-    e.preventDefault();
-    // setLogin(true);
+  // function handleLogin(e) {
+  //   e.preventDefault();
+  //   // setLogin(true);
 
-    const user = {email, password};
-    dispatch(loginUser(user));
+  //   const user = {email, password};
+  //   dispatch(loginUser(user));
+  // }
+  async function handleLogin(e) {
+      e.preventDefault();
+
+      const user = { email, password };
+
+      // Dispatch and wait for result
+      const resultAction = await dispatch(loginUser(user));
+      console.log(resultAction)
+      console.log(loginUser.rejected.match(resultAction))
+
+      if (loginUser.rejected.match(resultAction)) {
+        // If the login was rejected, show an alert
+        alert(resultAction.payload || "Login failed!");
+      }
   }
 
   function handleRegister(e){
@@ -49,6 +64,7 @@ function Modal({ setSignIn }) {
        setPassword("");
     }
   }, [isUserRegisteredToDB]);
+
 
   return (
     <form onSubmit={!isLogin ? handleRegister : handleLogin}>

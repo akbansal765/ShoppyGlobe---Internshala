@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
+
 export const registerUser = createAsyncThunk("registerUser", async (user, thunkAPI) => {
     try{
-        const response = await fetch(`http://localhost:5000/register`, {
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -23,7 +24,7 @@ export const registerUser = createAsyncThunk("registerUser", async (user, thunkA
 
 export const loginUser = createAsyncThunk("loginUser", async (user, thunkAPI) => {
     try{
-        const response = await fetch(`http://localhost:5000/login`, {
+        const response = await fetch(`https://shoppy-globe-backend.onrender.com/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -45,7 +46,7 @@ const userSlice = createSlice({
     name: "user",
     initialState : {
         isLogin: JSON.parse(localStorage.getItem("shoppyGlobeUserLoginStatus")) || false,
-        isUserRegistered: false
+        isUserRegistered: false,
     },
     reducers: {
         logoutUser: (state, _) => {
@@ -70,7 +71,6 @@ const userSlice = createSlice({
         .addCase(loginUser.pending, (state) => {
         })
         .addCase(loginUser.fulfilled, (state, action) => {
-            console.log("user has been resitered to DB")
             console.log(action.payload);
             //saving user information to local storage once user is logged in
             localStorage.setItem("shoppyGlobeUser", JSON.stringify(action.payload));
