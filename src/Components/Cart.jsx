@@ -1,13 +1,19 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CartItem from "./CartItem";
+import { getCartItemsDB} from "../utils/cartSlice";
+import { useEffect } from "react";
 
 function Cart(){
+    
+    const dispatch = useDispatch();
 
     // getting cart items from cart slice
     const cartItems = useSelector(store => store.cart.items);
     
     //getting totalQuanity from the cart slice
     const totalItems = useSelector(store => store.cart.totalQuantity);
+
+    const error = useSelector(store => store.cart.error);
 
     const totalPrice = cartItems.reduce((acc, cur) => {
           acc = acc + cur.quantity * cur.price;
@@ -18,6 +24,18 @@ function Cart(){
 
     // total amount = total price - coupons + platform fee + delivery charge
     const totalAmount = totalPrice - discount_30_percent + 5 + 20;
+
+    useEffect(() => {
+      dispatch(getCartItemsDB());
+    },[dispatch]);
+
+    if(error){
+        return (
+            <div className="fetch_error_box">
+                <p>{error}</p>
+            </div>
+        )
+    }
 
 
     return (

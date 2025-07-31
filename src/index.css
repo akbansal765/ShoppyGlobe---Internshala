@@ -6,6 +6,7 @@
 @import url('./CSS/productdetail.css');
 @import url('./CSS/cart.css');
 @import url('./CSS/notfound.css');
+@import url('./CSS/modal.css');
 
 *{
   box-sizing: border-box;

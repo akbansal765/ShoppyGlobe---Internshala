@@ -1,50 +1,57 @@
 import { useEffect, useState } from "react";
-import { useFetch } from "../utils/useFetch";
 import ProductItem from "./ProductItem";
 import loader from '../assets/spinner.gif'
-
-// import dummyData from '../assets/dummyData'
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductData } from "../utils/productDataSlice";
+import { getCartItemsDB } from "../utils/cartSlice";
 
 function ProductList(){
 
-    const [items, setItems] = useState('');
-    
-    const {data, error} = useFetch('https://dummyjson.com/products');
-    // console.log(data, error)
+    const [items, setItems] = useState([]);
+
+    const dispatch = useDispatch();
+    const products = useSelector(state => state.products);
 
     useEffect(() => {
-    if (data) {
-        setItems(data.products);
-    }
-    }, [data]);
+        dispatch(fetchProductData());
+        dispatch(getCartItemsDB());
+    }, [dispatch])
 
-    //handling error from useFetch custom hook
-     if(error){
-            return (
-                <div className="fetch_error_box">
-                  <img src={loader} alt="loader icon" />
-                  <p>Unable to Fetch data, try again later</p>
-                </div>
-            )
-     }
+    useEffect(() => {
+        if (products.data?.length) {
+        setItems(products.data);
+        }
+    }, [products.data]);
 
     // handling search filter
     function handleSearchProduct(value){
-        const filteredItems = data?.products?.filter(item => item.title.toLowerCase().includes(value.toLowerCase()));
+        const filteredItems = products?.data?.filter(item => item.title.toLowerCase().includes(value.toLowerCase()));
         setItems(filteredItems)
+    }
+
+    if(products.loading){
+        return (
+            <div className="fetch_error_box">
+                <img src={loader} alt="loader icon" />
+            </div>
+        )
+    }
+
+    if(products.error){
+        return (
+            <div className="fetch_error_box">
+                <p>{products.error}</p>
+            </div>
+        )
     }
 
     return (
         <div className="productList_component" id="productList_id">
             <input type="text" onChange={(e) => handleSearchProduct(e.target.value)} className="productList_filter" placeholder="Search by Product name"/>
             <div className="productList_container">
-            {items && 
-            <>
-            {items.map((item) => {
-                return <ProductItem item={item} key={item.id}/>
-            })}
-            </>
-            }
+                {items?.map((item) => {
+                        return <ProductItem item={item} key={item.id}/>
+                })}
             </div>
         </div>
     )

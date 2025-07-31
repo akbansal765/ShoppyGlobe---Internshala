@@ -1,10 +1,85 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
+
+export const addCartItemDB = createAsyncThunk("addCartItemDB", async (item, thunkAPI) => {
+    try{
+        const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
+        const response = await fetch(`http://localhost:5000/cart?email=${userEmail}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(item)
+        });
+        if (!response.ok) {
+            return thunkAPI.rejectWithValue("Failed to add to cart");
+        }
+        return response.json();
+    }catch(err){
+        return thunkAPI.rejectWithValue(err.message);
+    }
+})
+
+export const deleteCartItemDB = createAsyncThunk("deleteCartItemDB", async (id, thunkAPI) => {
+    try{
+        const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
+        const response = await fetch(`http://localhost:5000/cart/${id}?email=${userEmail}`, {
+            method: "DELETE",
+        });
+        if (!response.ok) {
+            return thunkAPI.rejectWithValue("Failed to delete the cart item");
+        }
+        return response.json();
+    }catch(err){
+        return thunkAPI.rejectWithValue(err.message);
+    }
+})
+
+export const updateCartItemDB = createAsyncThunk("updateCartItemDB", async ({id, quantity}, thunkAPI) => {
+    try{
+        const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
+        const response = await fetch(`http://localhost:5000/cart/${id}?email=${userEmail}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({quantity})
+        });
+        if (!response.ok) {
+            return thunkAPI.rejectWithValue("Failed to update the quantity");
+        }
+        return response.json();
+    }catch(err){
+        return thunkAPI.rejectWithValue(err.message);
+    }
+})
+
+export const getCartItemsDB = createAsyncThunk("getCartItemsDB", async (_, thunkAPI) => {
+    try{
+        const userEmail = JSON.parse(localStorage.getItem("shoppyGlobeUser"))?.email || "";
+        const response = await fetch(`http://localhost:5000/cartItems?email=${userEmail}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "authorization": `JWT ${JSON.parse(localStorage.getItem("shoppyGlobeUser")).accessToken}`
+            },
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            return thunkAPI.rejectWithValue(data.message || "Failed to get cart items!");
+        }
+        return data;
+    }catch(err){
+        return thunkAPI.rejectWithValue(err.message);
+    }
+})
+
 
 const cartSlice = createSlice({
     name: 'cart',
     initialState: {
         items: [],
         totalQuantity: 0,
+        error: ""
     },
     reducers: {
         addItem : (state, action) => {
@@ -16,8 +91,9 @@ const cartSlice = createSlice({
                  alreadyExistingItem.quantity = alreadyExistingItem.quantity + 1;
               }else{
                  // add the quantity 1 if item does not already exists in the cart/items state
-                 action.payload.quantity = 1;
-                 state.items.push(action.payload);
+                //  console.log(Object.isExtensible(action.payload));
+                 const item = {...action.payload, quantity: 1}
+                 state.items.push(item);
               }          
         },
         calculateTotalQuantity: (state) => {
@@ -56,6 +132,53 @@ const cartSlice = createSlice({
 
             //call the calculateTotalQuantity reducer func again when pressing the remove button
         }
+    },
+    extraReducers: (builder) => {
+        builder
+        .addCase(addCartItemDB.pending, (state) => {
+        })
+        .addCase(addCartItemDB.fulfilled, (state, action) => {
+        })
+        .addCase(addCartItemDB.rejected, (state) => {
+        });
+
+        builder
+        .addCase(deleteCartItemDB.pending, (state) => {
+        })
+        .addCase(deleteCartItemDB.fulfilled, (state, action) => {
+        })
+        .addCase(deleteCartItemDB.rejected, (state) => {
+        });
+
+        builder
+        .addCase(updateCartItemDB.pending, (state) => {
+        })
+        .addCase(updateCartItemDB.fulfilled, (state, action) => {
+        })
+        .addCase(updateCartItemDB.rejected, (state) => {
+        });
+
+        builder
+        .addCase(getCartItemsDB.pending, (state) => {
+        })
+        .addCase(getCartItemsDB.fulfilled, (state, action) => {
+            state.items = action.payload;
+            state.error = "";
+
+            // again calculating total items in cart after the page reloads and get items from database
+            const totalCartItems = action.payload.reduce((acc, cur) => {
+                acc = acc + cur.quantity;
+                return acc;
+            }, 0)
+
+            state.totalQuantity = totalCartItems;
+        })
+        .addCase(getCartItemsDB.rejected, (state, action) => {
+            state.error = action.payload;
+            //when user logout or unable to fetch cart items make the state zero
+            state.totalQuantity = 0;
+            state.items = [];
+        });
     }
 });
 

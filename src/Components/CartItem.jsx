@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { increaseQuantity, decreaseQuantity, removeItem, calculateTotalQuantity } from "../utils/cartSlice";
+import { increaseQuantity, decreaseQuantity, removeItem, deleteCartItemDB, updateCartItemDB, calculateTotalQuantity } from "../utils/cartSlice";
 
 function CartItem({cartItemData}){
 
@@ -14,14 +14,23 @@ function CartItem({cartItemData}){
 
     function handleIncreaseQuantity(){
         dispatch(increaseQuantity(cartItemData));
+
+        //updating quantity on backend DB
+        dispatch(updateCartItemDB({id: cartItemData.id, quantity: cartItemData.quantity + 1}))
     }
 
     function handleDecreaseQuantity(){
         dispatch(decreaseQuantity(cartItemData));
+
+        //updating quantity on backend DB
+        dispatch(updateCartItemDB({id: cartItemData.id, quantity: cartItemData.quantity - 1}))
     }
 
     function handleRemoveItem(){
         dispatch(removeItem(cartItemData));
+
+        //delete item from DB
+        dispatch(deleteCartItemDB(cartItemData.id));
 
         //calcualte the total quantity in cart slice after cart item being removed
         dispatch(calculateTotalQuantity());
